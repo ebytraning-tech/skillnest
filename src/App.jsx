@@ -77,7 +77,7 @@ const infoPages = {
 const slugify=value=>value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const pagePaths={catalog:'/',dashboard:'/my-learning',careers:'/career-guides',faqs:'/faqs',about:'/about',business:'/for-business',premium:'/premium',gift:'/gift-learning',testimonials:'/learner-stories',goals:'/learning-goals',contact:'/contact'};
 const routeFromPath=path=>{
- const clean=decodeURI(path).replace(/\\/+$/,'')||'/';
+ const clean=decodeURI(path).replace(/\/+$/,'')||'/';
  if(clean.startsWith('/course/')) return {tab:'catalog',course:clean.split('/').pop()};
  if(clean.startsWith('/category/')) return {tab:'catalog',category:clean.split('/').pop()};
  const entry=Object.entries(pagePaths).find(([,url])=>url===clean|| (clean==='/courses'&&url==='/'));

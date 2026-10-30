@@ -21,3 +21,19 @@
 .footer-links{flex-wrap:wrap;justify-content:flex-end}
 .directory-card{height:100%}
 @media(max-width:650px){.footer-links{justify-content:flex-start}}
+
+
+/* Relevant course photography and richer learning visuals */
+.course-art{background-size:cover;background-position:center;isolation:isolate}
+.course-art:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(15,59,57,.28),rgba(15,59,57,.04));z-index:-0}
+.course-art>div{position:relative;z-index:1;background:rgba(255,255,255,.9);backdrop-filter:blur(5px);width:78px;height:78px}
+.course-art>small,.course-art>.tag{z-index:1}
+.course-art.violet{background-image:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1000&q=85')}
+.course-art.pink{background-image:url('https://images.unsplash.com/photo-1516321498754-5c8c4e1f2f5b?auto=format&fit=crop&w=1000&q=85')}
+.course-art.orange{background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=85')}
+.course-art.blue{background-image:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=85')}
+.course-art.green{background-image:url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1000&q=85')}
+.course-art.cyan{background-image:url('https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1000&q=85')}
+.art{background-image:linear-gradient(135deg,rgba(20,93,84,.12),rgba(244,248,245,.18)),url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=85');background-size:cover;background-position:center}
+.art:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,250,248,.08),rgba(247,250,248,.25));pointer-events:none}
+@media(max-width:650px){.course-art{height:175px}}

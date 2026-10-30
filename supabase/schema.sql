@@ -61,6 +61,10 @@ drop policy if exists "Enrollment owner/admin read" on public.enrollments;
 create policy "Enrollment owner/admin read" on public.enrollments for select to authenticated using(student_id=(select auth.uid()) or private.is_admin());
 drop policy if exists "Admin enrollments all" on public.enrollments;
 create policy "Admin enrollments insert" on public.enrollments for insert to authenticated with check(private.is_admin());
+drop policy if exists "Learner free enrollment insert" on public.enrollments;
+create policy "Learner free enrollment insert" on public.enrollments for insert to authenticated with check(student_id=(select auth.uid()) and status='active' and progress=0 and exists(select 1 from public.courses c where c.id=course_id and c.published=true));
+drop policy if exists "Learner enrollment progress update" on public.enrollments;
+create policy "Learner enrollment progress update" on public.enrollments for update to authenticated using(student_id=(select auth.uid())) with check(student_id=(select auth.uid()));
 create policy "Admin enrollments update" on public.enrollments for update to authenticated using(private.is_admin()) with check(private.is_admin());
 create policy "Admin enrollments delete" on public.enrollments for delete to authenticated using(private.is_admin());
 
@@ -84,7 +88,10 @@ create policy "Admin activity logs" on public.activity_logs for all to authentic
 grant select on public.courses,public.site_content to anon,authenticated;
 grant select,update on public.profiles to authenticated;
 grant select,insert,update,delete on public.courses to authenticated;
-grant select,insert,update,delete on public.enrollments,public.orders,public.site_content,public.activity_logs to authenticated;
+grant select,insert,delete on public.enrollments to authenticated;
+revoke update on public.enrollments from authenticated;
+grant update(progress,status) on public.enrollments to authenticated;
+grant select,insert,update,delete on public.orders,public.site_content,public.activity_logs to authenticated;
 
 
 -- A verified paid order automatically grants course enrollment.

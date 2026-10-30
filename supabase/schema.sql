@@ -86,5 +86,22 @@ grant select,update on public.profiles to authenticated;
 grant select,insert,update,delete on public.courses to authenticated;
 grant select,insert,update,delete on public.enrollments,public.orders,public.site_content,public.activity_logs to authenticated;
 
+
+-- A verified paid order automatically grants course enrollment.
+create or replace function private.enroll_after_paid_order()
+returns trigger language plpgsql security definer set search_path='' as $
+begin
+ if new.status='paid' and new.student_id is not null and new.course_id is not null then
+  insert into public.enrollments(student_id,course_id,status,progress)
+  values(new.student_id,new.course_id,'active',0)
+  on conflict(student_id,course_id) do nothing;
+ end if;
+ return new;
+end; $;
+revoke all on function private.enroll_after_paid_order() from public,anon,authenticated;
+drop trigger if exists paid_order_enroll_student on public.orders;
+create trigger paid_order_enroll_student after insert or update of status on public.orders
+for each row execute procedure private.enroll_after_paid_order();
+
 -- Create your account through Supabase Auth first, then promote it:
 -- update public.profiles set role='admin' where email='YOUR_EMAIL_ADDRESS';

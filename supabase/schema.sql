@@ -32,6 +32,9 @@ create index if not exists courses_published_idx on public.courses(published);
 create index if not exists enrollments_student_idx on public.enrollments(student_id);
 create index if not exists orders_student_idx on public.orders(student_id);
 create index if not exists orders_status_idx on public.orders(status);
+create index if not exists enrollments_course_id_idx on public.enrollments(course_id);
+create index if not exists orders_course_id_idx on public.orders(course_id);
+create index if not exists activity_logs_actor_id_idx on public.activity_logs(actor_id);
 
 alter table public.profiles enable row level security;
 alter table public.courses enable row level security;
@@ -46,24 +49,34 @@ drop policy if exists "Admin profile update" on public.profiles;
 create policy "Admin profile update" on public.profiles for update to authenticated using(private.is_admin()) with check(private.is_admin());
 
 drop policy if exists "Published courses read" on public.courses;
-create policy "Published courses read" on public.courses for select to anon,authenticated using(published);
+drop policy if exists "Published courses public read" on public.courses;
+create policy "Published courses public read" on public.courses for select to anon using(published);
+create policy "Published courses and admin read" on public.courses for select to authenticated using(published or private.is_admin());
 drop policy if exists "Admin courses all" on public.courses;
-create policy "Admin courses all" on public.courses for all to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin courses insert" on public.courses for insert to authenticated with check(private.is_admin());
+create policy "Admin courses update" on public.courses for update to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin courses delete" on public.courses for delete to authenticated using(private.is_admin());
 
 drop policy if exists "Enrollment owner/admin read" on public.enrollments;
 create policy "Enrollment owner/admin read" on public.enrollments for select to authenticated using(student_id=(select auth.uid()) or private.is_admin());
 drop policy if exists "Admin enrollments all" on public.enrollments;
-create policy "Admin enrollments all" on public.enrollments for all to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin enrollments insert" on public.enrollments for insert to authenticated with check(private.is_admin());
+create policy "Admin enrollments update" on public.enrollments for update to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin enrollments delete" on public.enrollments for delete to authenticated using(private.is_admin());
 
 drop policy if exists "Orders owner/admin read" on public.orders;
 create policy "Orders owner/admin read" on public.orders for select to authenticated using(student_id=(select auth.uid()) or private.is_admin());
 drop policy if exists "Admin orders all" on public.orders;
-create policy "Admin orders all" on public.orders for all to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin orders insert" on public.orders for insert to authenticated with check(private.is_admin());
+create policy "Admin orders update" on public.orders for update to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin orders delete" on public.orders for delete to authenticated using(private.is_admin());
 
 drop policy if exists "Site content read" on public.site_content;
 create policy "Site content read" on public.site_content for select to anon,authenticated using(true);
 drop policy if exists "Admin content all" on public.site_content;
-create policy "Admin content all" on public.site_content for all to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin content insert" on public.site_content for insert to authenticated with check(private.is_admin());
+create policy "Admin content update" on public.site_content for update to authenticated using(private.is_admin()) with check(private.is_admin());
+create policy "Admin content delete" on public.site_content for delete to authenticated using(private.is_admin());
 
 drop policy if exists "Admin activity logs" on public.activity_logs;
 create policy "Admin activity logs" on public.activity_logs for all to authenticated using(private.is_admin()) with check(private.is_admin());

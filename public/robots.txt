@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://skillnest-chi.vercel.app/sitemap.xml

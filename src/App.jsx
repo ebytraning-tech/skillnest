@@ -33,6 +33,7 @@ const careerGuides=[
 {area:'People',title:'Human resources',icon:'🤝',category:'Human Resources',desc:'Explore recruitment, employee experience and people operations.',skills:'communication, organisation, empathy'},
 {area:'Engineering',title:'Engineering & sustainability',icon:'⚙️',category:'Engineering',desc:'Discover technical foundations and the future of energy.',skills:'technical thinking, safety, systems'}
 ];
+const skillTags=['Programming','Web Development','Python','JavaScript','Cybersecurity','Data Analysis','Artificial Intelligence','Digital Marketing','SEO','Graphic Design','Project Management','Accounting','Bookkeeping','Communication','Leadership','Human Resources','Customer Service','Teaching','English Language','Personal Development','Psychology','Renewable Energy','Health and Safety','Nutrition','Photography','Video Editing','Cloud Computing','Business Analysis','Entrepreneurship','Excel','SQL','Career Development','Creative Writing','Public Speaking'];
 const faqs=[
 {q:'Are SkillNest courses free?',a:'The learning catalogue is designed to offer free-to-learn courses. Any optional paid services or certificates should be clearly labelled before checkout.'},
 {q:'Do I need experience to enrol?',a:'Many courses are beginner-friendly. Check each course page for its level and any recommended prior knowledge.'},

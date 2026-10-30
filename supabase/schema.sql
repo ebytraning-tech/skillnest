@@ -12,15 +12,34 @@ create table if not exists public.orders(id uuid primary key default gen_random_
 create table if not exists public.site_content(id uuid primary key default gen_random_uuid(),key text not null unique,title text not null default '',body text not null default '',updated_at timestamptz not null default now());
 create table if not exists public.activity_logs(id uuid primary key default gen_random_uuid(),actor_id uuid references public.profiles(id) on delete set null,action text not null,entity_type text,entity_id uuid,details jsonb not null default '{}'::jsonb,created_at timestamptz not null default now());
 
-create or replace function private.handle_new_user() returns trigger language plpgsql security definer set search_path='' as $$
+-- The verified site-owner email is allowlisted so a recreated auth account
+-- is automatically promoted instead of being stuck with the default learner role.
+create or replace function private.handle_new_user()
+returns trigger language plpgsql security definer set search_path='' as $
+declare
+ assigned_role text := 'learner';
 begin
- insert into public.profiles(id,email,full_name) values(new.id,new.email,coalesce(new.raw_user_meta_data->>'full_name',''))
- on conflict(id) do update set email=excluded.email;
+ if lower(coalesce(new.email,''))='ebytraning@gmail.com'
+    and new.email_confirmed_at is not null then
+  assigned_role := 'admin';
+ end if;
+
+ insert into public.profiles(id,email,full_name,role)
+ values(new.id,new.email,coalesce(new.raw_user_meta_data->>'full_name',''),assigned_role)
+ on conflict(id) do update
+  set email=excluded.email,
+      full_name=case when excluded.full_name<>'' then excluded.full_name else public.profiles.full_name end,
+      role=case when excluded.role='admin' then 'admin' else public.profiles.role end;
  return new;
-end; $$;
+end; $;
 revoke all on function private.handle_new_user() from public,anon,authenticated;
 drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created after insert on auth.users for each row execute procedure private.handle_new_user();
+create trigger on_auth_user_created after insert on auth.users
+for each row execute function private.handle_new_user();
+drop trigger if exists on_auth_user_verified on auth.users;
+create trigger on_auth_user_verified after update of email_confirmed_at on auth.users
+for each row when (new.email_confirmed_at is not null)
+execute function private.handle_new_user();
 
 create or replace function private.is_admin() returns boolean language sql stable security definer set search_path='' as $$
  select exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin');

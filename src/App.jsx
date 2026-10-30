@@ -74,7 +74,7 @@ const infoPages = {
 };
 
 
-const slugify=value=>value.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const slugify=value=>value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const pagePaths={catalog:'/',dashboard:'/my-learning',careers:'/career-guides',faqs:'/faqs',about:'/about',business:'/for-business',premium:'/premium',gift:'/gift-learning',testimonials:'/learner-stories',goals:'/learning-goals',contact:'/contact'};
 const routeFromPath=path=>{
  const clean=decodeURI(path).replace(/\\/+$/,'')||'/';
@@ -85,7 +85,8 @@ const routeFromPath=path=>{
 };
 
 export default function App(){
-const initialRoute=routeFromPath(window.location.pathname);\nconst [filter,setFilter]=useState(initialRoute.category?(categories.find(c=>slugify(c[0])===initialRoute.category)?.[0]||'All'):'All'),[type,setType]=useState('All'),[level,setLevel]=useState('All Levels'),[language,setLanguage]=useState('All Languages'),[search,setSearch]=useState(''),[selected,setSelected]=useState(null),[menu,setMenu]=useState(false),[toast,setToast]=useState(''),[account,setAccount]=useState(''),[showAccount,setShowAccount]=useState(false),[tab,setTabState]=useState(initialRoute.tab),[enrolled,setEnrolled]=useState([]),[completed,setCompleted]=useState([]),[name,setName]=useState('');
+const initialRoute=routeFromPath(window.location.pathname);
+const [filter,setFilter]=useState(initialRoute.category?(categories.find(c=>slugify(c[0])===initialRoute.category)?.[0]||'All'):'All'),[type,setType]=useState('All'),[level,setLevel]=useState('All Levels'),[language,setLanguage]=useState('All Languages'),[search,setSearch]=useState(''),[selected,setSelected]=useState(null),[menu,setMenu]=useState(false),[toast,setToast]=useState(''),[account,setAccount]=useState(''),[showAccount,setShowAccount]=useState(false),[tab,setTabState]=useState(initialRoute.tab),[enrolled,setEnrolled]=useState([]),[completed,setCompleted]=useState([]),[name,setName]=useState('');
 const showToast=t=>{setToast(t);setTimeout(()=>setToast(''),2600)};
 const setTab=next=>{setTabState(next);const path=pagePaths[next]||'/';if(window.location.pathname!==path)window.history.pushState({},'',path);setSelected(null);};
 const openCourse=c=>{setSelected(c);const path='/course/'+slugify(c.title);window.history.pushState({},'',path);};
